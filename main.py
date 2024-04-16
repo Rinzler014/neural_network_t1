@@ -1,61 +1,84 @@
+#Importamos librerias
 import numpy as np
-import matplotlib.pyplot as plt
 
+#Generamos la calse de Perceptron
 class Perceptron(object):
-    def __init__(self, eta = 0.5, n_inter = 50, random_state = 1):
-        self.eta = eta #tasa de aprendizaje
-        self.n_inter = n_inter #numero de veces que va a pasar el conjunto de datos completo
-        self.random_state = random_state #Semilla del generador de numero aleatorios
+    #Inicializamos la matriz de pesos y definimos nuestra constante de aprendizaje
+    def __init__(self, N, alpha = 0.2):
+        self.W = np.random.randn(N + 1) / np.sqrt(N)
+        self.alpha = alpha
 
-    def fit(self, X, y):
-        #X Vector de entrenamiento
-        #_features = numero de caracteristicas
-        #y = vector de etiquetas de respuesta
-        rgen = np.random.RandomState(self.random_state) #Generamos numeros aleatorios
-        self.w_ = rgen.normal(loc = 0.0, scale = 0.01, size = 1 + X.shape[1]) #numero aleatorios con dev 0.01
-        #self.w_ = [0,0,0]
-        self.errores_ = [] #Lista para errores
+    #Función de pasos
+    def step(self, x):
+        return 1 if x > 0 else 0
+    
+    #Aqui insertamos una columna de 1's dentro de nuestra matriz de datos de aprendizaje
+    # y también definimos la cantidad de epochs por la cual nuestro modelo entrenará
+    def fit(self, X, y, epochs = 10):
+        X = np.c_[X, np.ones((X.shape[0]))]
+        #Ciclo for sobre la cantidad total de epochs
+        for epoch in np.arange(0, epochs):
+            #Ciclo for por cada punto de datos individual
+            for (x, target) in zip(X, y):
+                p = self.step(np.dot(x, self.W))
+                #Aqui en caso de que no se prediga el resultado que se espera, sacamos la diferencia y lo sumamoso al error
+                if p != target:
+                    error = p - target
+                    self.W += -self.alpha * error * x
+    
+    #En este método recibimos un set de datos
+    def predict(self, X, addBias = True):
+        #Revisamos que hayamos recibido una matriz
+        X = np.atleast_2d(X)
+
+        #Agregamos una columna de 1's en caso de ser necesario en la matriz
+        if addBias:
+            X = np.c_[X, np.ones((X.shape[0]))]
         
-        print('pesos iniciales', self.w_)
+        #Regresamos el producto punto entre la entrada y la matriz de pesos
+        return self.step(np.dot(X, self.W))
 
-        for _ in range(self.n_inter): #ciclo que se repite segun el numero de iteraciones
-            errores = 0
-            for xi, etiqueta in zip(X,y):
-                actualizacion  = self.eta * (etiqueta - self.predice(xi))
-                self.w_[1:] += actualizacion * xi
-                self.w_[0] += actualizacion
-                errores += int(actualizacion != 0)
-            self.errores_.append(errores)
-            print('Pesos en epoch', _ , ':', self.w_)
-        return self
+#Matriz de aprendizaje   
+X = np.array([[0,0,0,0],
+              [0,0,0,1],
+              [0,0,1,0],
+              [0,0,1,1],
+              [0,1,0,0],
+              [0,1,0,1],
+              [0,1,1,0],
+              [0,1,1,1],
+              [1,0,0,0],
+              [1,0,0,1],
+              [1,0,1,0],
+              [1,0,1,1],
+              [1,1,0,0],
+              [1,1,0,1],
+              [1,1,1,0],
+              [1,1,1,1]])
 
-    def entrada_neta(self, X):
-        return np.dot(X, self.w_[1:]) + self.w_[0]
-        
-    def predice(self, X):
-        return np.where(self.entrada_neta(X) >= 0.0, 1, -1)
-        
-datos = [[1,1], [1,-1], [-1,1], [-1,-1]]
-X = np.array(datos)
-y = [1, 1, 1, -1]
+#Salidas esperadas
+y = np.array([[0],
+              [0],
+              [1],
+              [0],
+              [0],
+              [0],
+              [1],
+              [0],
+              [0],
+              [0],
+              [1],
+              [0],
+              [1],
+              [1],
+              [1],
+              [1]])
 
-print(X)
-print(y)
+#Llamamos nuestra clase y pasamos los parametros necesarios
+p = Perceptron(X.shape[1], alpha = 0.1)
+p.fit(X, y, epochs = 20)
 
-plt.scatter(X[0:3, 0], X[0:3, 1], color = 'red', marker = 'o', label = 'Positivo')
-plt.scatter(X[3, 0], X[3, 1], color = 'blue', marker = 'x', label = 'Negativo')
-
-plt.xlabel('X1')
-plt.ylabel('X2')
-plt.legend(loc = 'upper center')
-
-plt.show()
-
-ppn = Perceptron(eta = 0.5, n_inter = 10)
-
-ppn.fit(X,y)
-
-plt.plot(range(1, len(ppn.errores_) + 1), ppn.errores_, marker = 'o')
-plt.xlabel('Epochs')
-plt.ylabel('Numero de actualizaciones')
-plt.show()
+#Revisamos las salidas
+for (x, target) in zip(X,y):
+    pred = p.predict(x)
+    print("Data={}, ground-truth={}, pred={}".format(x, target[0], pred))
