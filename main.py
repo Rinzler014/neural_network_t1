@@ -15,6 +15,7 @@ class Perceptron(object):
         self.w_ = rgen.normal(loc = 0.0, scale = 0.01, size = 1 + X.shape[1]) #numero aleatorios con dev 0.01
         #self.w_ = [0,0,0]
         self.errores_ = [] #Lista para errores
+        
         print('pesos iniciales', self.w_)
 
         for _ in range(self.n_inter): #ciclo que se repite segun el numero de iteraciones
