@@ -10,8 +10,7 @@ class Adaline:
         # Adaline class initialization with random weights
         self.weights = [random.uniform(-1, 1) for _ in range(input_size + 1)]  # Initialize random weights, including w0
         self.learning_rate = learning_rate  # Learning rate
-        self.costs = []  # List to store costs during training
-        self.errors = []  # List to store errors during training
+        self.errors = []  # List to store costs during training
 
     #Función de predicción que cálcula la suma del peso de las entradas
     def predict(self, inputs):
@@ -35,7 +34,7 @@ class Adaline:
             else:
                 self.weights[i] += self.learning_rate * error * inputs[i-1]
 
-    def calculate_cost(self, inputs, targets):
+    def calculate_errors(self, inputs, targets):
         # Function to calculate cost (mean squared error)
         predictions = [self.predict(inputs[i]) for i in range(len(inputs))]
         errors = [(predictions[i] - targets[i]) ** 2 for i in range(len(targets))]
@@ -49,9 +48,9 @@ class Adaline:
             for inputs, target in zip(training_inputs, targets):
                 #Actualiza pesos
                 self.update_weights(inputs, target)
-            #Cálcula y guarda el peso de cada época
-            cost = self.calculate_cost(training_inputs, targets)
-            self.costs.append(cost)
+            #Cálcula y guarda el error de cada época
+            error = self.calculate_errors(training_inputs, targets)
+            self.errors.append(error)
 
     def test(self, test_inputs, targets):
         # Function to test the model with test data and calculate accuracy
@@ -74,7 +73,7 @@ class Adaline:
                 correct += 1
 
         # Calculate error and accuracy on a scale of 0 to 1
-        error = self.calculate_cost(test_inputs, targets) / len(test_inputs)  # Mean error
+        error = self.calculate_errors(test_inputs, targets) / len(test_inputs)  # Mean error
         accuracy = correct / total  # Accuracy
 
         # Print normalized error and accuracy
@@ -101,8 +100,8 @@ class Adaline:
         # Function to plot costs during training
         plt.plot(range(1, len(self.costs) + 1), self.costs, marker='o')
         plt.xlabel('Epochs')
-        plt.ylabel('Cost')
-        plt.title('Training Cost vs. Epochs')
+        plt.ylabel('Error')
+        plt.title('Error vs. Epochs')
         plt.grid(True)
         plt.show()
 
@@ -111,8 +110,6 @@ class Adaline:
         predictions = [self.predict(inputs) for inputs in test_inputs]
         plt.plot(range(len(predictions)), predictions, label='Predicted')
         plt.plot(range(len(targets)), targets, label='Actual')
-        plt.xlabel('Sample Index')
-        plt.ylabel('Value')
         plt.title('Predicted vs. Actual')
         plt.legend()
         plt.grid(True)
@@ -122,9 +119,9 @@ class Adaline:
         
         plt.plot(test_targets, [self.predict(inputs) for inputs in test_inputs], color='blue')
         plt.plot(test_targets, test_targets, color='red')  # Línea diagonal perfecta
-        plt.xlabel('True Target')
-        plt.ylabel('True Prediction')
-        plt.title('True Prediction vs. True Target')
+        plt.xlabel('Target')
+        plt.ylabel('Prediction')
+        plt.title('Prediction vs. Target')
         plt.grid(True)
         plt.show()
     
