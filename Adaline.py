@@ -81,6 +81,7 @@ class Adaline:
         print(f"Error promedio: {error:.2f}")
         print(f"Precisión: {accuracy:.2f}")
 
+    # Función de activación para el caso 2
     def test_continous(self, test_inputs, test_targets):
             
         predictions = [self.predict(inputs) for inputs in test_inputs]
@@ -109,9 +110,9 @@ class Adaline:
     def plot_predictions(self, test_inputs, targets):
         # Función para modelar predicciones con los valores esperados
         predictions = [self.predict(inputs) for inputs in test_inputs]
-        plt.plot(range(len(predictions)), predictions, label='Predecido')
+        plt.plot(range(len(predictions)), predictions, label='Predicho')
         plt.plot(range(len(targets)), targets, label='Valor Real')
-        plt.title('Predecido contra el valor real')
+        plt.title('Predicho contra el valor real')
         plt.legend()
         plt.grid(True)
         plt.show()
@@ -244,4 +245,5 @@ def case_two():
     adaline_model.plot_predictions_line(test_patterns, test_outputs)
 
 os.system('cls')
-case_two()
+case_one()
+#case_two()
