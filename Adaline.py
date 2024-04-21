@@ -12,41 +12,43 @@ class Adaline:
         self.learning_rate = learning_rate  # Learning rate
         self.costs = []  # List to store costs during training
 
+    #Función de predicción que cálcula la suma del peso de las entradas
     def predict(self, inputs):
-        # Prediction function that calculates the weighted sum of inputs
         net_input = sum(weight * input_value for weight, input_value in zip(self.weights[1:], inputs)) + self.weights[0]
-        return self.sigmoid(net_input)  # Apply sigmoid function
+        return self.sigmoid(net_input)  #Aplicamos la función sigmoide
 
+    #Función de activación del sigmoide
     def sigmoid(self, z):
-        # Sigmoid activation function
         return 1 / (1 + np.exp(-z))
 
+    #Función que actualiza los pesos de acuerdo al error calculado
     def update_weights(self, inputs, target):
-        # Function to update weights based on error
-        predicted = self.predict(inputs)  # Calculate predicted output
-        error = target - predicted  # Calculate error
+        #Calcular la salida predicha y el error
+        predicted = self.predict(inputs)
+        error = target - predicted
 
-        # Update weights
+        #Actualizarmos pesos
         for i in range(len(self.weights)):
             if i == 0:
-                self.weights[i] += self.learning_rate * error  # Update w0 (bias)
+                self.weights[i] += self.learning_rate * error
             else:
-                self.weights[i] += self.learning_rate * error * inputs[i-1]  # Update other weights
+                self.weights[i] += self.learning_rate * error * inputs[i-1]
 
     def calculate_cost(self, inputs, targets):
         # Function to calculate cost (mean squared error)
         predictions = [self.predict(inputs[i]) for i in range(len(inputs))]
         errors = [(predictions[i] - targets[i]) ** 2 for i in range(len(targets))]
         return np.mean(errors)
-
+    
+    #Función para entrenar el modelo sobre un número específico de épocas
     def train(self, training_inputs, targets, epochs):
-        # Function to train the model for a specific number of epochs
+        #Ciclo for que va sobre la cantidad de épocas
         for epoch in range(epochs):
-            # Iterate over each training data and target pair
+            #Itera sobre cada dato de entrenamiento y objetivos
             for inputs, target in zip(training_inputs, targets):
-                # Update weights
+                #Actualiza pesos
                 self.update_weights(inputs, target)
-            # Calculate and store cost after each epoch
+            #Cálcula y guarda el peso de cada época
             cost = self.calculate_cost(training_inputs, targets)
             self.costs.append(cost)
 
