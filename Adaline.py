@@ -8,35 +8,35 @@ import matplotlib.pyplot as plt
 class Adaline:
     # Inicialización de la clase Adaline definiendo matriz de peso, constante de aprendizaje, matriz de costos y errores
     def __init__(self, input_size, learning_rate=0.1):
-        # Adaline class initialization with random weights
-        self.weights = [random.uniform(-1, 1) for _ in range(input_size + 1)]  # Initialize random weights, including w0
-        self.learning_rate = learning_rate  # Learning rate
-        self.errors = []  # List to store costs during training
+        # Inicialización de la clase Adaline con pesos aleatorios
+        self.weights = [random.uniform(-1, 1) for _ in range(input_size + 1)]
+        self.learning_rate = learning_rate
+        self.errors = []
 
     # Función de predicción que cálcula la suma del peso de las entradas
     def predict(self, inputs):
         net_input = sum(weight * input_value for weight, input_value in zip(self.weights[1:], inputs)) + self.weights[0]
         return self.sigmoid(net_input)  #Aplicamos la función sigmoide
 
-    #Función de activación del sigmoide
+    # Función de activación del sigmoide
     def sigmoid(self, z):
         return 1 / (1 + np.exp(-z))
 
     # Función para actualizar pesos de acuerdo al error calculado
     def update_weights(self, inputs, target):
-        #Calcular la salida predicha y el error
+        # Calcular la salida predicha y el error
         predicted = self.predict(inputs)
         error = target - predicted
 
-        #Actualizarmos pesos
+        # Actualizarmos pesos
         for i in range(len(self.weights)):
             if i == 0:
                 self.weights[i] += self.learning_rate * error
             else:
                 self.weights[i] += self.learning_rate * error * inputs[i-1]
 
+    # Función para calcular el error promedio
     def calculate_errors(self, inputs, targets):
-        # Function to calculate cost (mean squared error)
         predictions = [self.predict(inputs[i]) for i in range(len(inputs))]
         errors = [(predictions[i] - targets[i]) ** 2 for i in range(len(targets))]
         return np.mean(errors)
@@ -49,11 +49,11 @@ class Adaline:
             for inputs, target in zip(training_inputs, targets):
                 # Actualiza pesos
                 self.update_weights(inputs, target)
-            #Cálcula y guarda el error de cada época
+            # Cálcula y guarda el error de cada época
             error = self.calculate_errors(training_inputs, targets)
             self.errors.append(error)
 
-    #Función para probar el modelo con los datos de entrada y calcular la precisión
+    # Función para probar el modelo con los datos de entrada y calcular la precisión
     def test(self, test_inputs, targets):
         correct = 0 # Inicializamos el contador de predicciones correctas
         total = len(test_inputs)
@@ -73,7 +73,7 @@ class Adaline:
                 # Si es correcta la salida entonces incrementamos el contador de correctos
                 correct += 1
 
-        # Calculate error and accuracy on a scale of 0 to 1
+        # Calcular el error y la precisión en una escala del 0 al 1
         error = self.calculate_errors(test_inputs, targets) / len(test_inputs)  # Mean error
         accuracy = correct / total  # Accuracy
 
@@ -89,7 +89,7 @@ class Adaline:
         errors = [(prediction - target) ** 2 for prediction, target in zip(predictions, test_targets)]
         mean_error = np.mean(errors)
         
-        # Calcular la precisión (accuracy)
+        # Calcular la precisión
         total_samples = len(test_targets)
         within_tolerance = sum(1 for prediction, target in zip(predictions, test_targets) if abs(prediction - target) < 0.5)
         accuracy = within_tolerance / total_samples
@@ -98,7 +98,7 @@ class Adaline:
         print(f"Precisión: {accuracy:.2f}")
 
     def plot_errors(self):
-        # Function to plot costs during training
+        # Función para imprimir costos durante el entrenamiento
         plt.plot(range(1, len(self.errors) + 1), self.errors, marker='o')
         plt.xlabel('Epocas')
         plt.ylabel('Error')
@@ -107,7 +107,7 @@ class Adaline:
         plt.show()
 
     def plot_predictions(self, test_inputs, targets):
-        # Function to plot model predictions along with expected values
+        # Función para modelar predicciones con los valores esperados
         predictions = [self.predict(inputs) for inputs in test_inputs]
         plt.plot(range(len(predictions)), predictions, label='Predecido')
         plt.plot(range(len(targets)), targets, label='Valor Real')

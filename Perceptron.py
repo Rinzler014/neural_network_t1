@@ -42,25 +42,25 @@ class Perceptron:
     def test(self, test_inputs, targets):
         correct = 0
         total = len(test_inputs)
-        print("Testing:")
+        print("Pruebas:")
         # Ciclo for para mostrar todos los datos de entrada, esperados y predichos
         for inputs, target in zip(test_inputs, targets):
             prediction = self.predict(inputs)
-            print(f"Input: {inputs}, Target: {target}, Predicted: {prediction}")
+            print(f"Entrada: {inputs}, Objetivo: {target}, Predicho: {prediction}")
             if prediction == target:
                 correct += 1
                 
         mean_training_error = sum(self.errors) / len(self.errors)
         accuracy = correct / total
-        print(f"Mean error: {mean_training_error:.2f}")
-        print(f"Accuracy: {accuracy:.2f}")
+        print(f"Error promedio: {mean_training_error:.2f}")
+        print(f"Precisión: {accuracy:.2f}")
 
     # Función para imprimir errores
     def plot_errors(self):
         plt.plot(range(1, len(self.errors) + 1), self.errors, marker='o')
-        plt.xlabel('Epochs')
-        plt.ylabel('Errors')
-        plt.title('Errors vs. Epochs')
+        plt.xlabel('Épocas')
+        plt.ylabel('Errores')
+        plt.title('Errores vs. Épocas')
         plt.grid(True)
         plt.show()
 
