@@ -6,14 +6,14 @@ import sys
 import matplotlib.pyplot as plt
 
 class Adaline:
+    # Inicialización de la clase Adaline definiendo matriz de peso, constante de aprendizaje, matriz de costos y errores
     def __init__(self, input_size, learning_rate=0.1):
-        # Adaline class initialization with random weights
-        self.weights = [random.uniform(-1, 1) for _ in range(input_size + 1)]  # Initialize random weights, including w0
-        self.learning_rate = learning_rate  # Learning rate
-        self.costs = []  # List to store costs during training
-        self.errors = []  # List to store errors during training
+        self.weights = [random.uniform(-1, 1) for _ in range(input_size + 1)] 
+        self.learning_rate = learning_rate
+        self.costs = []
+        self.errors = [] 
 
-    #Función de predicción que cálcula la suma del peso de las entradas
+    # Función de predicción que cálcula la suma del peso de las entradas
     def predict(self, inputs):
         net_input = sum(weight * input_value for weight, input_value in zip(self.weights[1:], inputs)) + self.weights[0]
         return self.sigmoid(net_input)  #Aplicamos la función sigmoide
@@ -22,7 +22,7 @@ class Adaline:
     def sigmoid(self, z):
         return 1 / (1 + np.exp(-z))
 
-    #Función que actualiza los pesos de acuerdo al error calculado
+    # Función para actualizar pesos de acuerdo al error calculado
     def update_weights(self, inputs, target):
         #Calcular la salida predicha y el error
         predicted = self.predict(inputs)
@@ -35,51 +35,51 @@ class Adaline:
             else:
                 self.weights[i] += self.learning_rate * error * inputs[i-1]
 
+    # Función para calcular el error promedio alcanzado
     def calculate_cost(self, inputs, targets):
-        # Function to calculate cost (mean squared error)
         predictions = [self.predict(inputs[i]) for i in range(len(inputs))]
         errors = [(predictions[i] - targets[i]) ** 2 for i in range(len(targets))]
         return np.mean(errors)
     
-    #Función para entrenar el modelo sobre un número específico de épocas
+    # Función encargada del entrenamiento del modelo
     def train(self, training_inputs, targets, epochs):
-        #Ciclo for que va sobre la cantidad de épocas
+        # Ciclo for sobre la cantidad de épocas
         for epoch in range(epochs):
-            #Itera sobre cada dato de entrenamiento y objetivos
+            # Itera sobre cada dato de entrenamiento y objetivos
             for inputs, target in zip(training_inputs, targets):
-                #Actualiza pesos
+                # Actualiza pesos
                 self.update_weights(inputs, target)
-            #Cálcula y guarda el peso de cada época
+            # Cálcula y guarda el peso de cada época
             cost = self.calculate_cost(training_inputs, targets)
             self.costs.append(cost)
 
+    #Función para probar el modelo con los datos de entrada y calcular la precisión
     def test(self, test_inputs, targets):
-        # Function to test the model with test data and calculate accuracy
-        correct = 0  # Initialize correct predictions counter
-        total = len(test_inputs)  # Calculate total number of test samples
+        correct = 0 # Inicializamos el contador de predicciones correctas
+        total = len(test_inputs)
 
-        print("Testing:")
+        print("Pruebas:")
         for inputs, target in zip(test_inputs, targets):
-            # Make a prediction with the model
+            # Predicción con el modelo
             prediction = self.predict(inputs)
-            # Convert output to binary (0 or 1)
+            # Convertimos la salida en binario
             if prediction >= 0.5:
                 output = 1
             else:
                 output = 0
-            print(f"Input: {inputs}, Target: {target}, Predicted: {output}")
+            print(f"Entrada: {inputs}, Objetivo: {target}, Predicho: {output}")
 
             if output == target:
-                # If prediction is correct, increment counter
+                # Si es correcta la salida entonces incrementamos el contador de correctos
                 correct += 1
 
-        # Calculate error and accuracy on a scale of 0 to 1
-        error = self.calculate_cost(test_inputs, targets) / len(test_inputs)  # Mean error
-        accuracy = correct / total  # Accuracy
+        # Calcular el error en una escala del 0 al 1
+        error = self.calculate_cost(test_inputs, targets) / len(test_inputs)  # Error promedio
+        accuracy = correct / total  # Precisión
 
-        # Print normalized error and accuracy
-        print(f"Mean Error: {error:.2f}")
-        print(f"Accuracy: {accuracy:.2f}")
+        # Imprimimos el error promedio y la precisión
+        print(f"Error promedio: {error:.2f}")
+        print(f"Precisión: {accuracy:.2f}")
 
     def test_continous(self, test_inputs, test_targets):
             
@@ -94,26 +94,26 @@ class Adaline:
         within_tolerance = sum(1 for prediction, target in zip(predictions, test_targets) if abs(prediction - target) < 0.5)
         accuracy = within_tolerance / total_samples
         
-        print(f"Mean Error: {mean_error:.2f}")
-        print(f"Accuracy: {accuracy:.2f}")
+        print(f"Error promedio: {mean_error:.2f}")
+        print(f"Precisión: {accuracy:.2f}")
 
     def plot_costs(self):
         # Function to plot costs during training
         plt.plot(range(1, len(self.costs) + 1), self.costs, marker='o')
-        plt.xlabel('Epochs')
-        plt.ylabel('Cost')
-        plt.title('Training Cost vs. Epochs')
+        plt.xlabel('Épocas')
+        plt.ylabel('Costo')
+        plt.title('Costo de entrenamiento vs. Épocas')
         plt.grid(True)
         plt.show()
 
     def plot_predictions(self, test_inputs, targets):
         # Function to plot model predictions along with expected values
         predictions = [self.predict(inputs) for inputs in test_inputs]
-        plt.plot(range(len(predictions)), predictions, label='Predicted')
+        plt.plot(range(len(predictions)), predictions, label='Predicho')
         plt.plot(range(len(targets)), targets, label='Actual')
-        plt.xlabel('Sample Index')
-        plt.ylabel('Value')
-        plt.title('Predicted vs. Actual')
+        plt.xlabel('Indice de muestra')
+        plt.ylabel('Valor')
+        plt.title('Predicho vs. Actual')
         plt.legend()
         plt.grid(True)
         plt.show()
@@ -122,9 +122,9 @@ class Adaline:
         
         plt.plot(test_targets, [self.predict(inputs) for inputs in test_inputs], color='blue')
         plt.plot(test_targets, test_targets, color='red')  # Línea diagonal perfecta
-        plt.xlabel('True Target')
-        plt.ylabel('True Prediction')
-        plt.title('True Prediction vs. True Target')
+        plt.xlabel('Verdadero objetivo')
+        plt.ylabel('Verdadera predicción')
+        plt.title('Verdadera predicción vs. Verdadero objetivo')
         plt.grid(True)
         plt.show()
     
@@ -171,7 +171,7 @@ def case_two():
             test_data.append(eq)
             
     
-    print("Generating Training Patterns...")
+    print("Generando patrones de entrenamiento...")
     
     for i in range(len(training_data)):
             if i == 999:
@@ -189,7 +189,7 @@ def case_two():
                 training_patterns.append([x1, x2, x3, x1_squared, x2_squared, x3_squared])
                 training_outputs.append(result)
                 
-                print("Done...")
+                print("Listo...")
                 break
     
             x1 = training_data[i]
@@ -206,7 +206,7 @@ def case_two():
             training_patterns.append([x1, x2, x3, x1_squared, x2_squared, x3_squared])
             training_outputs.append(result)
     
-    print("Generating Test Patterns")
+    print("Generando patrones de entrenamiento...")
     
     for i in range(len(test_data)):
         
@@ -217,7 +217,7 @@ def case_two():
             x3 = test_data[i+2]
             result = test_data[i+3]
             
-            #Calcular el cuadrado de cada entrada
+            # Calcular el cuadrado de cada entrada
             x1_squared = x1 ** 2
             x2_squared = x2 ** 2
             x3_squared = x3 ** 2
@@ -225,7 +225,7 @@ def case_two():
             # Agregar las entradas originales al arreglo de entrenamiento
             test_patterns.append([x1, x2, x3, x1_squared, x2_squared, x3_squared])
             test_outputs.append(result)
-            print("Done...")
+            print("Listo...")
             break
 
         x1 = test_data[i]
@@ -233,7 +233,7 @@ def case_two():
         x3 = test_data[i+2]
         result = test_data[i+3]
         
-        #Calcular el cuadrado de cada entrada
+        # Calcular el cuadrado de cada entrada
         x1_squared = x1 ** 2
         x2_squared = x2 ** 2
         x3_squared = x3 ** 2
