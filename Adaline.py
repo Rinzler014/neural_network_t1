@@ -12,7 +12,6 @@ class Adaline:
         self.weights = [random.uniform(-1, 1) for _ in range(input_size + 1)]  # Initialize random weights, including w0
         self.learning_rate = learning_rate  # Learning rate
         self.errors = []  # List to store costs during training
-        self.costs = []
 
     # Función de predicción que cálcula la suma del peso de las entradas
     def predict(self, inputs):
