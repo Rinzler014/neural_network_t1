@@ -12,6 +12,7 @@ class Adaline:
         self.weights = [random.uniform(-1, 1) for _ in range(input_size + 1)]  # Initialize random weights, including w0
         self.learning_rate = learning_rate  # Learning rate
         self.errors = []  # List to store costs during training
+        self.costs = []
 
     # Función de predicción que cálcula la suma del peso de las entradas
     def predict(self, inputs):
@@ -97,21 +98,21 @@ class Adaline:
         print(f"Error promedio: {mean_error:.2f}")
         print(f"Precisión: {accuracy:.2f}")
 
-    def plot_costs(self):
+    def plot_errors(self):
         # Function to plot costs during training
-        plt.plot(range(1, len(self.costs) + 1), self.costs, marker='o')
-        plt.xlabel('Epochs')
+        plt.plot(range(1, len(self.errors) + 1), self.errors, marker='o')
+        plt.xlabel('Epocas')
         plt.ylabel('Error')
-        plt.title('Error vs. Epochs')
+        plt.title('Error por epoca')
         plt.grid(True)
         plt.show()
 
     def plot_predictions(self, test_inputs, targets):
         # Function to plot model predictions along with expected values
         predictions = [self.predict(inputs) for inputs in test_inputs]
-        plt.plot(range(len(predictions)), predictions, label='Predicho')
-        plt.plot(range(len(targets)), targets, label='Actual')
-        plt.title('Predicted vs. Actual')
+        plt.plot(range(len(predictions)), predictions, label='Predecido')
+        plt.plot(range(len(targets)), targets, label='Valor Real')
+        plt.title('Predecido contra el valor real')
         plt.legend()
         plt.grid(True)
         plt.show()
@@ -120,9 +121,9 @@ class Adaline:
         
         plt.plot(test_targets, [self.predict(inputs) for inputs in test_inputs], color='blue')
         plt.plot(test_targets, test_targets, color='red')  # Línea diagonal perfecta
-        plt.xlabel('Target')
-        plt.ylabel('Prediction')
-        plt.title('Prediction vs. Target')
+        plt.xlabel('Objetivo')
+        plt.ylabel('Predicción')
+        plt.title('Predicccion contra valor real')
         plt.grid(True)
         plt.show()
     
@@ -137,7 +138,7 @@ def case_one():
 
     adaline_model.train(inputs, desired_outputs, epochs=100)
     adaline_model.test(inputs, desired_outputs)
-    adaline_model.plot_costs()
+    adaline_model.plot_errors()
 
 def case_two():
     
@@ -169,8 +170,6 @@ def case_two():
             test_data.append(eq)
             
     
-    print("Generando patrones de entrenamiento...")
-    
     for i in range(len(training_data)):
             if i == 999:
                 x1 = training_data[i]
@@ -187,7 +186,6 @@ def case_two():
                 training_patterns.append([x1, x2, x3, x1_squared, x2_squared, x3_squared])
                 training_outputs.append(result)
                 
-                print("Listo...")
                 break
     
             x1 = training_data[i]
@@ -203,8 +201,6 @@ def case_two():
             # Agregar las entradas originales al arreglo de entrenamiento
             training_patterns.append([x1, x2, x3, x1_squared, x2_squared, x3_squared])
             training_outputs.append(result)
-    
-    print("Generando patrones de entrenamiento...")
     
     for i in range(len(test_data)):
         
@@ -223,7 +219,7 @@ def case_two():
             # Agregar las entradas originales al arreglo de entrenamiento
             test_patterns.append([x1, x2, x3, x1_squared, x2_squared, x3_squared])
             test_outputs.append(result)
-            print("Listo...")
+
             break
 
         x1 = test_data[i]
@@ -244,7 +240,7 @@ def case_two():
     adaline_model = Adaline(input_size=6, learning_rate=0.05)
     adaline_model.train(training_patterns, training_outputs, epochs=1000)
     adaline_model.test_continous(test_patterns, test_outputs)
-    adaline_model.plot_costs()
+    adaline_model.plot_errors()
     adaline_model.plot_predictions(test_patterns, test_outputs)
     adaline_model.plot_predictions_line(test_patterns, test_outputs)
 
